@@ -1,15 +1,12 @@
-import time
 import pyautogui
 import cv2
 import numpy as np
 import tkinter as tk
-from tkinter import messagebox
-from tkinter import PhotoImage
-from PIL import Image, ImageTk
- 
+
+
 def run():
     # Specifies screen recording variables.
-    resolution = (1920, 1080)
+    resolution = (2560, 1440)
     codec = cv2.VideoWriter_fourcc(*"XVID")
     filename = "Recording.avi"
     fps = 30.0
@@ -38,6 +35,7 @@ def run():
     out.release()               # Afterwards releases the video writer object,
     cv2.destroyAllWindows()     # and destroys all windows.
 
+
 def compare():
     template_image = cv2.imread('hook.png')
     test_image = cv2.imread('hook1.png')
@@ -57,13 +55,15 @@ def compare():
         print("Images are similar enough.")
 
     # # Draw the matches on a combined image
-    # result_image = cv2.drawMatches(template_image, keypoints1, test_image, keypoints2, good_matches, None, flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
+    # result_image = cv2.drawMatches(template_image, keypoints1, test_image, keypoints2, good_matches, None,
+    # flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
 
     # # Save and display the result
     # cv2.imwrite('sift_matches.png', result_image)
     # cv2.imshow('Matches', result_image)
     # cv2.waitKey(0)
     # cv2.destroyAllWindows()
+
 
 def run_app():
     # Initialises the tkinter application.
@@ -99,7 +99,7 @@ def run_app():
     survivor1, survivor2, survivor3, survivor4 = 0, 0, 0, 0
 
     while True:
-        img = pyautogui.screenshot(region=(60, 350, 80, 70))    # Takes a screenshot using PyAutoGUI.
+        img = pyautogui.screenshot(region=(100, 500, 200, 200))    # Takes a screenshot using PyAutoGUI.
         frame = np.array(img)                                   # Converts the screenshot to a Numpy array.
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)         # Converts to grayscale.
         cv2.imshow('Live', frame)                               # Displays the recording screen.
@@ -124,6 +124,7 @@ def run_app():
     out.release()               # Afterwards releases the video writer object,
     cv2.destroyAllWindows()     # and destroys all windows.
     root.mainloop()
+
 
 if __name__ == ("__main__"):
     run_app()
