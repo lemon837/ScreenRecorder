@@ -15,13 +15,16 @@ import numpy as np
 import tkinter as tk
 import time
 from functools import partial
+import threading
 
+hook_thread = None
+stop_event = None
 
 def create_app():
     # Initialises the tkinter application.
     root = tk.Tk()
     root.title("DBD Hook Counter")
-    root.geometry("375x280")
+    root.geometry("375x350")
     label1 = tk.Label(root, text="Survivor 1: ")
     label1.pack(pady=10)
     label2 = tk.Label(root, text="Survivor 2: ")
@@ -31,18 +34,36 @@ def create_app():
     label4 = tk.Label(root, text="Survivor 4: ")
     label4.pack(pady=10)
     root.update()       # Ensures app stays open and waits for updates.
-    reset_button = tk.Button(root, text="Reset Counter", command=partial(count_hooks, root, label1, label2, label3, label4))
-    reset_button.pack(pady=25)
+    start_button = tk.Button(root, text="Start Counter", command=partial(start_thread, root, label1, label2, label3, label4))
+    start_button.pack(pady=15)
+    reset_button = tk.Button(root, text="Reset Counter", command=partial(reset_thread, root, label1, label2, label3, label4))
+    reset_button.pack(pady=15)
     root.mainloop()
 
-# reset_button = tk.Button(root, text="Reset Counter", command=partial(count_hooks, root, label1, label2, label3, label4))
-# reset_button.pack(pady=25)
-# root.mainloop()
+
+def start_thread(root, label1, label2, label3, label4):
+    global hook_thread, stop_event
+
+    if hook_thread
+
+    stop_event = threading.Event()
+    hook_thread = threading.Thread(target=count_hooks, args=(root, label1, label2, label3, label4))
+    hook_thread.start()
 
 
-# def start_threading(root, label1, label2, label3, label4):
-#     thread = threading.Thread(target=count_hooks, args=((root, label1, label2, label3, label4)))
-#     thread.start()
+def reset_thread(root, label1, label2, label3, label4):
+    global hook_thread, stop_event
+    
+    print("reset")
+    if hook_thread.is_alive():
+        print("thread alive already, stopping...")
+        stop_event.set()
+        hook_thread.join()
+
+    stop_event = threading.Event()
+    hook_thread = threading.Thread(target=count_hooks, args=(root, label1, label2, label3, label4))
+    hook_thread.start()
+
 
 def count_hooks(root, label1, label2, label3, label4):
     # Specifies screen recording variables.
