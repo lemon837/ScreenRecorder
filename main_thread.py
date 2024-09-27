@@ -34,11 +34,35 @@ def create_app():
     label4 = tk.Label(root, text="Survivor 4: ")
     label4.pack(pady=10)
     root.update()       # Ensures app stays open and waits for updates.
-    start_button = tk.Button(root, text="Start Counter", command=partial(count_hooks, root, label1, label2, label3, label4))
+    start_button = tk.Button(root, text="Start Counter", command=partial(start_thread, root, label1, label2, label3, label4))
     start_button.pack(pady=15)
-    reset_button = tk.Button(root, text="Reset Counter", command=partial(count_hooks, root, label1, label2, label3, label4))
+    reset_button = tk.Button(root, text="Reset Counter", command=partial(reset_thread, root, label1, label2, label3, label4))
     reset_button.pack(pady=15)
     root.mainloop()
+
+
+def start_thread(root, label1, label2, label3, label4):
+    global hook_thread, stop_event
+
+    # if hook_thread
+
+    stop_event = threading.Event()
+    hook_thread = threading.Thread(target=count_hooks, args=(root, label1, label2, label3, label4))
+    hook_thread.start()
+
+
+def reset_thread(root, label1, label2, label3, label4):
+    global hook_thread, stop_event
+    
+    print("reset")
+    if hook_thread.is_alive():
+        print("thread alive already, stopping...")
+        stop_event.set()
+        hook_thread.join()
+
+    stop_event = threading.Event()
+    hook_thread = threading.Thread(target=count_hooks, args=(root, label1, label2, label3, label4))
+    hook_thread.start()
 
 
 def count_hooks(root, label1, label2, label3, label4):
@@ -48,16 +72,16 @@ def count_hooks(root, label1, label2, label3, label4):
     filename = "Recording.avi"
     fps = 30.0
 
-    # # Creates the four windows that show each survivor's status icon.
-    # out = cv2.VideoWriter(filename, codec, fps, resolution)     # Creates a VideoWriter object.
-    # cv2.namedWindow("surv1", cv2.WINDOW_NORMAL)                 # Creates an empty window on desktop.
-    # cv2.resizeWindow("surv1", 110, 110)                         # Resizes the window
-    # cv2.namedWindow("surv2", cv2.WINDOW_NORMAL)
-    # cv2.resizeWindow("surv2", 110, 110)
-    # cv2.namedWindow("surv3", cv2.WINDOW_NORMAL)
-    # cv2.resizeWindow("surv3", 110, 110)
-    # cv2.namedWindow("surv4", cv2.WINDOW_NORMAL)
-    # cv2.resizeWindow("surv4", 110, 110)
+    # Creates the four windows that show each survivor's status icon.
+    out = cv2.VideoWriter(filename, codec, fps, resolution)     # Creates a VideoWriter object.
+    cv2.namedWindow("surv1", cv2.WINDOW_NORMAL)                 # Creates an empty window on desktop.
+    cv2.resizeWindow("surv1", 110, 110)                         # Resizes the window
+    cv2.namedWindow("surv2", cv2.WINDOW_NORMAL)
+    cv2.resizeWindow("surv2", 110, 110)
+    cv2.namedWindow("surv3", cv2.WINDOW_NORMAL)
+    cv2.resizeWindow("surv3", 110, 110)
+    cv2.namedWindow("surv4", cv2.WINDOW_NORMAL)
+    cv2.resizeWindow("surv4", 110, 110)
 
     # Initialises main survivor variables.
     surv1_count, surv2_count, surv3_count, surv4_count = 0, 0, 0, 0
@@ -73,22 +97,22 @@ def count_hooks(root, label1, label2, label3, label4):
         img = pyautogui.screenshot(region=(100, 630, 110, 110))     # Takes a screenshot using PyAutoGUI.
         frame1 = np.array(img)                                      # Converts the screenshot to a Numpy array.
         frame1 = cv2.cvtColor(frame1, cv2.COLOR_BGR2GRAY)           # Converts to grayscale.
-        # cv2.imshow('surv1', frame1)                                 # Displays the recording screen.
+        cv2.imshow('surv1', frame1)                                 # Displays the recording screen.
 
         img = pyautogui.screenshot(region=(100, 740, 110, 110))
         frame2 = np.array(img)
         frame2 = cv2.cvtColor(frame2, cv2.COLOR_BGR2GRAY)
-        # cv2.imshow('surv2', frame2)
+        cv2.imshow('surv2', frame2)
 
         img = pyautogui.screenshot(region=(100, 850, 110, 110))
         frame3 = np.array(img)
         frame3 = cv2.cvtColor(frame3, cv2.COLOR_BGR2GRAY)
-        # cv2.imshow('surv3', frame3)
+        cv2.imshow('surv3', frame3)
 
         img = pyautogui.screenshot(region=(100, 960, 110, 110))
         frame4 = np.array(img)
         frame4 = cv2.cvtColor(frame4, cv2.COLOR_BGR2GRAY)
-        # cv2.imshow('surv4', frame4)
+        cv2.imshow('surv4', frame4)
 
         # Analyses survivor's current image, compares to template.
         keypoints1, descriptors1 = sift.detectAndCompute(frame1, None)
